@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/resources/img">
+        <file>img/ayuda.png</file>
+        <file>img/flabajo.png</file>
+        <file>img/flarriba.png</file>
+        <file>img/flabajo2.png</file>
+        <file>img/flarriba2.png</file>
+        <file>img/flecha abajo.png</file>
+        <file>img/calib_icon64.png</file>
+        <file>img/gray-led16.png</file>
+        <file>img/green-led16.png</file>
+        <file>img/red-led16.png</file>
+        <file>img/btgreen24.png</file>
+        <file>img/Fotografiar48.png</file>
+    </qresource>
+</RCC>
