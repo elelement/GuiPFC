@@ -10,7 +10,6 @@ Hand::Hand()
     _contour = new vector<Point>();
     _depth = 0;
     _center = new Point(ROWS/2, COLS/2);
-
 //    randu(*_state, Scalar(0), Scalar(0.1));
 //    randu(_kf.statePost, Scalar(0), Scalar(0.1));
 }
