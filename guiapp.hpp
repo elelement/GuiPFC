@@ -28,8 +28,8 @@ public slots:
     void kinectUp();
     void kinectDown();
     void refresh();
-    void connect2lego();//que se haga mediante un gesto y que indique si ha salido bien con una luz
     void switch2WorkMode();
+    void connectBT();
 
 public:
     int MODO_OPERACION;

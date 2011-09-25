@@ -34,7 +34,7 @@ public:
     void moveDown();
     void startDevice();
     void calibrar();
-    QString connect();
+    int connect();
     HandDetection& getHDObject();
 
     static void mapDepth2Color(Mat& depth, Mat& color);

@@ -65,31 +65,14 @@ void GUIController::moveDown()
     device->degrees = device->degrees-1.0;
 }
 
-QString GUIController::connect()
+int GUIController::connect()
 {
     char *dest;
     dest = (char *) malloc(sizeof (char) * 18);
     bzero(dest, 18);
     // La MAC del dispositivo bluetooth del brick de lego
     strncpy(dest, "00:16:53:0F:1A:2A", 18);
-    if(btc1->init_bluetooth(dest) < 0){
-        btc1->close_connection();//close(btc1.sock);
-        //imprimir mensaje de error en el label
-        QString cadena("Error: ha sido imposible entablar una conexión.");
-        //limpiar variables para volver a intentarlo
-        return cadena;
-        //ui->statusBar->showMessage(cadena);
-    } else {
-        //printf("Bluetooth conectado a %s \n", dest);
-        //ui->mensajes->setText("Bluetooth conectado a %s \n", dest);
-        QString cadena("Bluetooth conectado a ");
-        cadena.append(dest);
-        return cadena;
-        //ui->statusBar->showMessage(cadena);
-        //ui->calibrar->setEnabled(true);
-    }
-
-    //Llamar a la parte del análisis de imagen y mostrar vídeo en pantalla
+    return btc1->init_bluetooth(dest);
 }
 
 /*Hacer que devuelva true, en funcion de si esta a la distancia correcta*/

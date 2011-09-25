@@ -22,14 +22,14 @@ GuiApp::GuiApp(QWidget *parent) :
 
     calibrating = false;
     ui->statusBar->setStyleSheet("color: rgb(215, 71, 114);");
-    QString cadena("Bienvenido");
-    ui->statusBar->showMessage(cadena);
+    ui->statusBar->showMessage("Bienvenido");
     timer = new QTimer(this);
     timer->setInterval(REFRESH_TIMER);//aprox 24 fps
     ui->lcdNumber->display(0);
     timer->start();
+    ui->reconnect->setVisible(false);
 
-//    QObject::connect(ui->conectar, SIGNAL(clicked()), this, SLOT(connect2lego()));
+    QObject::connect(ui->reconnect, SIGNAL(clicked()), this, SLOT(connectBT()));
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(refresh()));
     //QTimer::singleShot(200,this,SLOT(refresh()));
     //QObject::connect(ui->startButton, SIGNAL(clicked()), this, SLOT(process()));
@@ -51,8 +51,16 @@ GuiApp::~GuiApp()
     delete _glWidget;
 }
 
-void GuiApp::connect2lego(){
-    gc->connect();
+void GuiApp::connectBT(){
+    ui->statusBar->showMessage("Conectando... Espere por favor.");
+    if(gc->connect() < 0){
+        ui->reconnect->setVisible(true);
+        ui->statusBar->showMessage("Imposible conectar. Reintentelo pulsando el boton de reconectar.");
+         ui->btLED->setStyleSheet(QString("image: url(:/resources/img/img/red-led16.png);"));
+    }else{
+        ui->statusBar->showMessage("Conexion finalizada.");
+        ui->btLED->setStyleSheet(QString("image: url(:/resources/img/img/green-led16.png);"));
+    }
 }
 
 void GuiApp::refresh()
@@ -78,7 +86,9 @@ void GuiApp::refresh()
 //        flip(*(gc->rgbMat), *(gc->rgbMat), 1);
         flip(*(gc->depthMat), *(gc->depthMat), 1);
         if(initiated == false){
-            printf("una vez\n");
+            //Conectamos via bluetooth
+            connectBT();
+            //Creamos la nube de puntos
            _glWidget->setImages(*(gc->depthf), *(gc->depthMat), *(gc->dst));
            _glWidget->resize(640,480);
            _glWidget->show();
@@ -104,7 +114,10 @@ void GuiApp::refresh()
         ui->lcdNumber->display(gc->getHDObject().getFingersCount(LEFT_HAND));
         //pasar por parametro un valor booleano que
         //permita o no enviar los mensajes por BT
-        //Enviamos los datos
+        //Enviamos los datos via bluetooth
+        //El formato sera *marcha*giro_respecto_perpendicular_centro_volante*
+
+
     }
         break;
     case 2:

@@ -38,39 +38,23 @@ bool BTComm::isConnected(){
 
 int BTComm::init_bluetooth(char* btAddress){
     struct sockaddr_rc addr;// = {0};
-    int status;
+    int status = -1;
 
     //Alojamos un socket
-    sock = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
-    
-    //Establecemos el tipo y a quien nos queremos conectar
-    addr.rc_family = AF_BLUETOOTH;
-    addr.rc_channel = (uint8_t) 1;
-    str2ba(btAddress, &addr.rc_bdaddr);
-    
-    //Conectamos al robotin
-    status = connect(sock, (struct sockaddr *)&addr, sizeof(addr));
-    if(status < 0) {
-        perror("Error connecting BT");
-        //return status;
+    if((sock = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM)) >= 0){
+        //Establecemos el tipo y a quien nos queremos conectar
+        addr.rc_family = AF_BLUETOOTH;
+        addr.rc_channel = (uint8_t) 1;
+        str2ba(btAddress, &addr.rc_bdaddr);
+
+        //Conectamos al robotin
+        printf("por lo menos el socket se crea");
+        status = connect(sock, (struct sockaddr *)&addr, sizeof(addr));
     }
     return status;
 }
 
-int BTComm::create_socket() {
-    sock = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
-    if (sock < 0) {
-        return -1;
-    }
-    return 0;
-}
 
-int BTComm::connect_nxt() {
-    if (connect(sock, (struct sockaddr *) &server_addr, sizeof (server_addr)) < 0) {
-        return -1;
-    }
-    return 0;
-}
 
 int BTComm::disconnect_nxt() {
     if (close_connection() < 0) {
@@ -125,11 +109,7 @@ char* BTComm::read_buffer(char* buffer){
 }
 
 int BTComm::close_connection() {
-    if (close(sock) < 0) {
-        return -1;
-    }
-    printf("Connection closed.\n");
-    return 0;
+    return close(sock);
 }
 
 void BTComm::clean() {
