@@ -98,8 +98,8 @@ void GUIController::calibrar(){
     device->getDepth(*depthMat);
     flip(*rgbMat, *rgbMat, 1);
     Mat dmclone = (depthMat->clone());
-//    dmclone.convertTo(*depthf, CV_8UC1, 255.0 / 2048.0);
-    Utils::normalizeRawData(dmclone, *depthf);
+    dmclone.convertTo(*depthf, CV_8UC1, 255.0 / 2048.0);
+//    Utils::normalizeRawData(dmclone, *depthf);
 
     Point closestPoint = Utils::getClosestPoint(dmclone);//guardar como var. global
     cDistance->x = closestPoint.x;
@@ -117,10 +117,8 @@ bool GUIController::process(){
     //Rango de alcance del Kinect basarlo en una constante q se defina al calibrar
     //float escala = ((float) umbral)*255.0/(102.0*2048.0);
     Mat dmclone = (depthMat->clone());
-    Utils::normalizeRawData(dmclone, *depthf);
-    //Opening
-//    namedWindow("hola", CV_WINDOW_AUTOSIZE);
-
+    dmclone.convertTo(*depthf, CV_8UC1, 255.0 / 2048.0);
+//    Utils::normalizeRawData(dmclone, *depthf);
     //La rotamos para ponerla en modo "espejo". De otra forma el control se vuelve
     //antiintuivo e incomodo.
     flip(*rgbMat, *rgbMat, 1);
@@ -129,6 +127,8 @@ bool GUIController::process(){
 
 //    threshold(*depthf, *img_bw, umbral, 255, CV_THRESH_BINARY);
 //    threshold(*depthf, *depthf, umbral, 255, CV_THRESH_BINARY);//CV_THRESH_TRUN
+
+    //Opening
     erode(*img_bw,*img_bw,Mat(),Point(-1,-1),5);//esto esta bien
     dilate(*img_bw,*img_bw,Mat(),Point(-1,-1),5);
 

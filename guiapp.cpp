@@ -66,21 +66,14 @@ void GuiApp::refresh()
 
         QString cadena("     You are \n");
         cadena.append("         ");
-        //printf("Valor %i ",gc->depthf->at <uchar> (gc->cDistance->x, gc->cDistance->y));
-        //En realidad debe ser el valor de la funcion get distanceCM
         int distance = Utils::getDistanceFromSource(*(gc->depthMat), *(gc->cDistance));
 
         cadena.append(QString::number(distance));//gc->depthf->at <uint8_t> (gc->cDistance->x, gc->cDistance->y))
         cadena.append("  cm.\n             away");
-//        ui->impresion->setText(cadena);
+        ui->impresion->setText(cadena);
 
         Mat gris(*(gc->depthf));
         flip(gris, gris, 1);
-//        Mat grayI(gris);
-//        Scalar color(0,0,255);
-//        Utils::applyColor(gris, grayI, color);
-
-        showImage(gris, *(gc->rgbMat));
 
 //        flip(*(gc->rgbMat), *(gc->rgbMat), 1);
         flip(*(gc->depthMat), *(gc->depthMat), 1);
@@ -89,7 +82,6 @@ void GuiApp::refresh()
            _glWidget->setImages(*(gc->depthf), *(gc->depthMat), *(gc->dst));
            _glWidget->resize(640,480);
            _glWidget->show();
-//           _glWidget->show();
            initiated = true;
         }
     }
@@ -112,7 +104,7 @@ void GuiApp::refresh()
         ui->lcdNumber->display(gc->getHDObject().getFingersCount(LEFT_HAND));
         //pasar por parametro un valor booleano que
         //permita o no enviar los mensajes por BT
-        //Quiza, dejar configurar el threshold al usuario
+        //Enviamos los datos
     }
         break;
     case 2:

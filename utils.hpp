@@ -9,6 +9,7 @@
 #include <opencv/highgui.hpp>
 
 #include "guiappheaders.hpp"
+#include "mykinect.hpp"
 using namespace cv ;
 
 class Utils
@@ -21,7 +22,7 @@ public:
     static void mythreshold(Mat& gray, Mat& bw, uint8_t th, int max);
     static bool compareYAxis(Point& p1, Point& p2);
     static Point getClosestPoint(Mat& depthImg);
-    static int getDistanceFromSource(Mat& depthMat, Point& p);
+    static float getDistanceFromSource(Mat& depthMat, Point& p);
     static Point centroid(vector<Point>& polygon);
     static Point getRectCenter(Rect const& r);
     static void opening(Mat& hand, Mat& dst);

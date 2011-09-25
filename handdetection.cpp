@@ -92,40 +92,28 @@ void HandDetection::detectHands(Mat& depthImage, Mat& color) {
     vector<int> phull2;
     vector<CvConvexityDefect> fingerTips2;
     vector<Point> curva2;
-    int min = COLS, max = 0;
     Point ref(0, ROWS/2);
     vector<Point> palm2;
-    Point2f center2;
-    float radius2;
 
 
     cv::findContours(depthImage, contornos, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
     for(size_t i=0; i<contornos.size(); i++) {
         double aux = contourArea(Mat(contornos[i]));
-//        printf("area %f\n",aux);
+
         if(aux > 0 && aux >= 1000 && aux <= 35000) {//35000
 //          Comparar cada blob en base a la distancia con su punto de "tracking"
             Rect r = boundingRect(Mat(contornos[i]));
             Point punto = Utils::getRectCenter(r);
             int d = (int)Utils::OXDistance(punto, ref);
-            //Metodo de ordenacion min y max en base a la distancia
-            //Evitar que sean la misma mano, en caso de haber solo una mano te
-            //dira q son casi iguales y las pintara en el mismo lado, pareciendo la misma
-            //Almacenando el punto anterior yo creo en HAND
             bool isleft = false;
-            if(d < min ){//&& area > _leftHand->getArea()
-                min = d;
+            if(d < COLS/2 ){//&& area > _leftHand->getArea()
                 manoI = contornos[i];
                 _leftHand->setContour(manoI);
                 _leftHand->setCenter(punto);
                 _leftHand->setWhich(LEFT_HAND);
                 isleft = true;
             }
-//si el brect de manoD solapa con el de manoI, entonces solo hay una mano
-            //si esta mas proxima de la derecha suponemos q es la dcha, si no,
-            //la izqda
-            if(d >= max){//if(coincidenAproxIzqda() == true) then
-                max = d;
+            if(d >= COLS/2){
                 manoD = contornos[i];
                 _rightHand->setContour(manoD);
                 _rightHand->setCenter(punto);
@@ -133,13 +121,7 @@ void HandDetection::detectHands(Mat& depthImage, Mat& color) {
             }
         }
     }
-//    if(contornos.size() <= 0){
-//        _leftHand->initStates(6,1,0, *(Mat_<float>(6, 6) << 1,0,1,0,0.5,0, 0,1,0,1,0,0.5, 0,0,1,0,1,0, 0,0,0,1,0,1, 0,0,0,0,1,0, 0,0,0,0,0,1));
 
-//    }
-//    if(_rightHand->getCenter().x == 0 && _rightHand->getCenter().y == 0){
-//        _rightHand->initStates(6,1,0, *(Mat_<float>(6, 6) << 1,0,1,0,0.5,0, 0,1,0,1,0,0.5, 0,0,1,0,1,0, 0,0,0,1,0,1, 0,0,0,0,1,0, 0,0,0,0,0,1));
-//    }
     _leftHand->trackObject(color);//tienes q ver que pasa si lefhand vale lo mismo q antes
     _rightHand->trackObject(color);
     Point p = _rightHand->getCenter();
@@ -148,42 +130,13 @@ void HandDetection::detectHands(Mat& depthImage, Mat& color) {
     //Calculamos los poligonos de Hull (convex Hull)
     if(manoD.size() > 0){
         Rect r1 = boundingRect(Mat(manoD));
-        rectangle(color, r1, Scalar(200,200,200), 3);
-        Mat matriz1(manoD);
-        //Si no esta presente rightHand entonces
-        //randu(state, Scalar(0), Scalar(0.1));
-        //randu(kalman.statePost, Scalar(0), Scalar(0.1));
-//        _rightHand->trackObject(color);
-//        if(_noTemplate == true){
-//            _to->setTemplate(matriz1);
-//            _noTemplate = false;
-//        }
-        //Calculo de los dedos
-        if(matriz1.rows > 0 && matriz1.cols > 0){
-//            Rect r1 = boundingRect(matriz1);
-//            _to->setRoi(r1);
-//            _to->trackObject(color);
-    //        approxPolyDP(matriz1, curva1, APPROX_POLY_SIDES, true);//20
-    //        Mat aux1(curva1);
-    //        convexHull(aux1, phull1, true);//CV_CLOCKWISE
-    //        vector<Point> poly;
-    //        for(int i=0; i<(int)phull1.size(); i++){
-    //            poly.push_back(curva1[phull1[i]]);
-    //        }
-    //        Utils::drawConvexHull(color, curva1, phull1);
-            //vector<CvConvexityDefect> defects;
-            //findConvexityDefects(curva1, phull1, defects);//pasar curva2 a int*
-
-    //        Point p = Utils::centroid(curva1);
-    //        circle(color, p, 5, Scalar(200,200,200), 7, -1);
-    //        Mat c1(curva1);//prueba con phull1 q ya estan ordenados sentido agujas reloj
-        }
+        rectangle(color, r1, Scalar(0,0,255), 3);
+//        Mat matriz1(manoD);
     }
 
     if(manoI.size() > 0){
-//        _leftHand->trackObject(color);
         Rect r2 = boundingRect(Mat(manoI));
-        rectangle(color, r2, Scalar(0,0,0), 3);
+        rectangle(color, r2, Scalar(255,0,0), 3);
         Mat matriz2(manoI);
         if(matriz2.rows > 0 && matriz2.cols > 0){
             //Calculamos el poligono convexo que recubre la mano

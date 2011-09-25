@@ -41,9 +41,12 @@ public:
     void trackObject(Mat &img);
     void initStates(const int dymParams, const int measureParams, const int controlParams, const Mat& T);
 
+    const Mat getPredicted();
+    const Mat getMeasured();
+    const Mat getEstimated();
+
 private:
     vector<Point>* _contour;//CvBlob
-    KalmanFilter* _filter;
     Point* _center;
     int _fingers;
     uint8_t _depth;

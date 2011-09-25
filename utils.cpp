@@ -89,7 +89,8 @@ bool Utils::existsPoint(Point &p, vector<Point> &points){
 }
 
 void Utils::normalizeRawData(Mat &rawMat, Mat &depth){
-    float m_min = 2048.0, m_max = 0.0;
+    Mutex mymutex;
+    float m_min = 10000.0, m_max = 0.0;
     for(int i=0; i<rawMat.rows; i++){
         for(int j=0; j<rawMat.cols; j++){
             float depthValue = (float)rawMat.at <uint16_t> (i, j);
@@ -101,13 +102,17 @@ void Utils::normalizeRawData(Mat &rawMat, Mat &depth){
     for(int i=0; i<rawMat.rows; i++){
         for(int j=0; j<rawMat.cols; j++){
             float depthValue = (float)rawMat.at <uint16_t> (i,j);
-            float dist = (float)((tan((depthValue/1024.0)+0.5)) * 33.825 + 5.7);
+            float dist = ((tan((depthValue/1024.0)+0.5)) * 33.825 + 5.7);
             if(dist <= m_min){
+                mymutex.lock();
                 depth.at <uint8_t> (i, j) = (uint8_t)255;//Shadow needs to be white for thresholding
+                mymutex.unlock();
             }else{
                 float f1 = (float)dist;
                 float f2 = (float) (m_max-m_min);
-               depth.at <uint8_t> (i, j) = (uint8_t)(f1 * 255.0/f2);
+                mymutex.lock();
+                depth.at <uint8_t> (i, j) = (uint8_t)(f1 * 255.0/f2);
+                mymutex.unlock();
             }
         }
     }
@@ -125,9 +130,9 @@ int Utils::OXDistance(Point& p1, Point& ref){
  * DIST_CM=TAN(DEPTH_VAL/1024+0,5)*33.825+5.7
  * Empirical results.
  */
-int Utils::getDistanceFromSource(Mat& depthMat, Point& p){
+float Utils::getDistanceFromSource(Mat& depthMat, Point& p){
     float depthValue = (float)depthMat.at <uint16_t> (p.x,p.y);
-    return (int)((tan((depthValue/1024.0)+0.5)) * 33.825 + 5.7);
+    return (tan((depthValue/1024.0)+0.5)) * 33.825 + 5.7;
 }
 
 Point Utils::getClosestPoint(Mat& depthImg){

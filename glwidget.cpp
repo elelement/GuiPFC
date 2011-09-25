@@ -173,7 +173,7 @@ GLuint GLWidget::makeImage(){
     for(int i=0; i<_dst.rows; i++){
         for(int j=0; j<_dst.cols; j++){
             Point p = Point(i,j);
-            float d = (float)Utils::getDistanceFromSource(_depth, p);//_depth.at<uint16_t>(i,j);
+            float d = Utils::getDistanceFromSource(_depth, p);//_depth.at<uint16_t>(i,j);
             if(d > maxp)
                 maxp = d;
             if(d < minp)
@@ -192,7 +192,7 @@ GLuint GLWidget::makeImage(){
 //            p3d.x = ((float)i - cx_d) * ((float)_depth.at <uint8_t> (i,j)) / fx_d;
 //            p3d.y = ((float)j - cy_d) * ((float)_depth.at <uint8_t> (i,j)) / fy_d;
             Point p = Point(i,j);
-            p3d.z = (float)Utils::getDistanceFromSource(_depth, p);//_depth.at<uint16_t>(i,j);
+            p3d.z = _depth.at <uint16_t>(i, j)*255.0/DEPTH_RANGE;//_depth.at<uint16_t>(i,j);
 
             //p3dprima = R*p3d + T;
 //            Point3f p3dprima;
