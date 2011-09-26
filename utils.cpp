@@ -32,17 +32,14 @@ void Utils::setRect(Rect &r1, Rect const& r2){
 
 float Utils::getAngleOX(Point& p1, Point& p2) {
     float a, b;//coseno y seno
-    float alfa;//hipotenusa y anulo
 
     a = p2.x - p1.x;
     b = p2.y - p1.y;
 
     if(a != 0){
-        alfa = std::atan(b/a);
-    }else{
-        return 0;
+       return (float)(std::atan(b/a));//hipotenusa y anulo
     }
-    return alfa;
+    return 0;
 }
 
 /*The angle it is in radians*/

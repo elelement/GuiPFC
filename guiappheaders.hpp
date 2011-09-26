@@ -5,6 +5,7 @@
 #define COLS 640
 #define C_TIME 3000 //Calibration time in miliseconds
 #define REFRESH_TIMER 80 //41 = aprox 24 frames ps
+#define SEND_TIME 300
 #define M_MIN 2048
 #define M_MAX 0
 #define MIN_DEPTH 0

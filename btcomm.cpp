@@ -50,6 +50,7 @@ int BTComm::init_bluetooth(char* btAddress){
         //Conectamos al robotin
         printf("por lo menos el socket se crea");
         status = connect(sock, (struct sockaddr *)&addr, sizeof(addr));
+
     }
     return status;
 }
@@ -63,17 +64,9 @@ int BTComm::disconnect_nxt() {
     return 0;
 }
 
-int BTComm::send_message(char *message, int length) {
+int BTComm::send_message(const char *message, int length) {
     //Si la conexion se realizo con exito
-    int ok = ::send(sock, message, sizeof(char)*length,0);
-    
-    if (ok < 0) {
-        printf("No se pudo enviar el mensaje.\n"); //perror?            
-        return -1;
-    } else {
-        printf("Message: %s  SENDED\n", message);
-        return 0;
-    }
+    return send(sock, message, sizeof(char)*length, MSG_DONTWAIT);
 }
 
 int BTComm::send_int(int a) {

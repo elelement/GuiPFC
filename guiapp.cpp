@@ -21,18 +21,18 @@ GuiApp::GuiApp(QWidget *parent) :
     gc->startDevice();
 
     calibrating = false;
-    ui->statusBar->setStyleSheet("color: rgb(215, 71, 114);");
-    ui->statusBar->showMessage("Bienvenido");
+    ui->statusBar->setStyleSheet("color: rgb(59, 58, 54);font: 75 11pt 'Ubuntu';");
+    ui->statusBar->showMessage("Conectando... Espere por favor.");
     timer = new QTimer(this);
     timer->setInterval(REFRESH_TIMER);//aprox 24 fps
+
     ui->lcdNumber->display(0);
     timer->start();
     ui->reconnect->setVisible(false);
 
     QObject::connect(ui->reconnect, SIGNAL(clicked()), this, SLOT(connectBT()));
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(refresh()));
-    //QTimer::singleShot(200,this,SLOT(refresh()));
-    //QObject::connect(ui->startButton, SIGNAL(clicked()), this, SLOT(process()));
+
     QObject::connect(ui->calibrar, SIGNAL(clicked()), this, SLOT(switch2WorkMode()));
     QObject::connect(ui->up, SIGNAL(clicked()), this, SLOT(kinectUp()));
     QObject::connect(ui->down, SIGNAL(clicked()), this, SLOT(kinectDown()));
@@ -51,6 +51,33 @@ GuiApp::~GuiApp()
     delete _glWidget;
 }
 
+void GuiApp::sendBTMessage(){
+    Hand* manita = gc->getHDObject().getRightHand();
+    Point position = manita->getCenter();
+    int marcha = gc->getHDObject().getFingersCount(LEFT_HAND);
+
+    //Enviamos los datos via bluetooth
+    //El formato sera *marcha*giro_respecto_perpendicular_centro_volante*
+
+    int angulo = Utils::getAngleOX(position, *(_wheel->getCenter()));
+    //angulo(position, centro_volante) y q devuelva un string con el número
+    printf("Marcha %d, Giro %d\n", marcha, angulo);
+
+    //Comprobamos que haya un angulo o una marcha para enviar
+    if(angulo >= 0 && marcha >= 0){
+        QString qs("*");
+        qs.append(QString::number(marcha)).append("#").append(QString::number(angulo)).append("@");
+        string to_send = qs.toStdString();
+        printf("Enviar : %s\n", to_send.c_str());
+//        if(gc->btc1->send_message(to_send.c_str(), to_send.size()+1) < 0){//+1 por el car. null
+//            //error, hay que reabrir la conexión
+//            ui->reconnect->setVisible(true);
+//            ui->statusBar->showMessage("Se ha perdido la conexion. Reintentelo pulsando el boton de reconectar.");
+//            ui->btLED->setStyleSheet(QString("image: url(:/resources/img/img/red-led16.png);"));
+//        }
+    }
+}
+
 void GuiApp::connectBT(){
     ui->statusBar->showMessage("Conectando... Espere por favor.");
     if(gc->connect() < 0){
@@ -58,8 +85,14 @@ void GuiApp::connectBT(){
         ui->statusBar->showMessage("Imposible conectar. Reintentelo pulsando el boton de reconectar.");
          ui->btLED->setStyleSheet(QString("image: url(:/resources/img/img/red-led16.png);"));
     }else{
-        ui->statusBar->showMessage("Conexion finalizada.");
+        ui->statusBar->showMessage("Conectado.");
         ui->btLED->setStyleSheet(QString("image: url(:/resources/img/img/green-led16.png);"));
+        //Iniciamos el hilo
+        send_timer = new QTimer(this);
+        send_timer->setInterval(SEND_TIME);
+        send_timer->start();
+        QObject::connect(send_timer, SIGNAL(timeout()), this, SLOT(sendBTMessage()));
+        //_thread = QtConcurrent::run(send_message, message, mlength);
     }
 }
 
@@ -70,6 +103,10 @@ void GuiApp::refresh()
     switch(operation_mode){
     case 0:
     {
+        if(initiated == false){
+            //Conectamos via bluetooth
+            connectBT();
+        }
         calibrateKinect();
 
         QString cadena("     You are \n");
@@ -86,8 +123,6 @@ void GuiApp::refresh()
 //        flip(*(gc->rgbMat), *(gc->rgbMat), 1);
         flip(*(gc->depthMat), *(gc->depthMat), 1);
         if(initiated == false){
-            //Conectamos via bluetooth
-            connectBT();
             //Creamos la nube de puntos
            _glWidget->setImages(*(gc->depthf), *(gc->depthMat), *(gc->dst));
            _glWidget->resize(640,480);
@@ -110,13 +145,9 @@ void GuiApp::refresh()
             ui->okLED->setStyleSheet(QString("image: url(:/resources/img/img/red-led16.png);"));
         }
         //mapDepth2Color(*(gc->dst), *(gc->rgbMat));
-        showImage(*(gc->dst), *(gc->rgbMat));
-        ui->lcdNumber->display(gc->getHDObject().getFingersCount(LEFT_HAND));
-        //pasar por parametro un valor booleano que
-        //permita o no enviar los mensajes por BT
-        //Enviamos los datos via bluetooth
-        //El formato sera *marcha*giro_respecto_perpendicular_centro_volante*
 
+        ui->lcdNumber->display(gc->getHDObject().getFingersCount(LEFT_HAND));
+        showImage(*(gc->dst), *(gc->rgbMat));
 
     }
         break;

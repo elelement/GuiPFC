@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QTimer>
+#include <QFuture>
+#include <QtConcurrentRun>
 #include <time.h>
 #include "libfreenect.hpp"
 #include "btcomm.hpp"
@@ -30,6 +32,7 @@ public slots:
     void refresh();
     void switch2WorkMode();
     void connectBT();
+    void sendBTMessage();
 
 public:
     int MODO_OPERACION;
@@ -46,11 +49,13 @@ public:
     bool event(QEvent *event);
 
 private:
+    QFuture<void> _thread;
     Ui::GuiApp *ui;
     SteeringWheel* _wheel;
     bool initiated;
     unsigned int cDepth;
     QTimer* timer, calibTimer;
+    QTimer* send_timer;
     clock_t tStart;
     bool calibrating;
     enum operation_mode_t {CALIBRATION, WORK, STOP};

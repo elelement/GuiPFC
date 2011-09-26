@@ -27,7 +27,7 @@ public:
     int connect_nxt();
     int disconnect_nxt();
     
-    int send_message(char *message, int length);
+    int send_message(const char *message, int length);
     int send_int(int a);
     
     int read_data();
