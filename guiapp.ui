@@ -340,6 +340,23 @@ background-color: rgb(243, 246, 255);</string>
       <normaloff>:/resources/img/img/tryagain.gif</normaloff>:/resources/img/img/tryagain.gif</iconset>
     </property>
    </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>300</y>
+      <width>71</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 75 12pt &quot;Ubuntu&quot;;
+color: rgb(59, 58, 54);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
    <zorder>label</zorder>
    <zorder>calibrar</zorder>
    <zorder>line_2</zorder>
@@ -352,6 +369,7 @@ background-color: rgb(243, 246, 255);</string>
    <zorder>inferior</zorder>
    <zorder>groupBox</zorder>
    <zorder>reconnect</zorder>
+   <zorder>label_2</zorder>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">

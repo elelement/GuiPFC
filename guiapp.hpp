@@ -53,6 +53,7 @@ private:
     Ui::GuiApp *ui;
     SteeringWheel* _wheel;
     bool initiated;
+    int sentido;
     unsigned int cDepth;
     QTimer* timer, calibTimer;
     QTimer* send_timer;

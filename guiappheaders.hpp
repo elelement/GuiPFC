@@ -18,6 +18,8 @@
 #define LEFT_HAND 0
 #define RIGHT_HAND 1
 #define DEPTH_RANGE 700//1024
+#define MARCHA_ADELANTE 1
+#define MARCHA_ATRAS -1
 
 
 #endif // GUIAPPHEADERS_HPP

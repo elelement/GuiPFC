@@ -89,9 +89,9 @@ void HandDetection::detectHands(Mat& depthImage, Mat& color) {
     vector<vector<Point> > contornos;
     vector<Vec4i> hierarchy;
 //    double area = 0.0;
-    vector<int> phull2;
-    vector<CvConvexityDefect> fingerTips2;
-    vector<Point> curva2;
+    vector<int> phull1, phull2;
+    vector<CvConvexityDefect> fingerTips1, fingerTips2;
+    vector<Point> curva1, curva2;
     Point ref(0, ROWS/2);
     vector<Point> palm2;
 
@@ -131,7 +131,27 @@ void HandDetection::detectHands(Mat& depthImage, Mat& color) {
     if(manoD.size() > 0){
         Rect r1 = boundingRect(Mat(manoD));
         rectangle(color, r1, Scalar(0,0,255), 3);
-//        Mat matriz1(manoD);
+        Mat matriz1(manoD);
+        if(matriz1.rows > 0 && matriz1.cols > 0){
+            //Calculamos el poligono convexo que recubre la mano
+            //Simplificamos, primero, el contorno.
+            approxPolyDP(matriz1, curva1, APPROX_POLY_SIDES, true);//20
+            Mat curvi(curva1);
+            convexHull(curvi, phull1, CV_CLOCKWISE);
+            vector<Point> poly;
+            for(int i=0; i<(int)phull1.size(); i++){
+                poly.push_back(curva1[phull1[i]]);
+            }
+
+            //Ahora dibujamos los defectos de convexidad
+            vector<CvConvexityDefect> defects;
+            findConvexityDefects(curva1, phull1, defects);//pasar curva2 a int*
+
+            //De todos los start y end, te quedas con los que coincidan del poligono aproximado
+            findFingerTips(curva1, defects, fingerTips1);
+            int fingersCount = (int)fingerTips1.size();
+            _rightHand->setFingers(fingersCount);
+        }
     }
 
     if(manoI.size() > 0){

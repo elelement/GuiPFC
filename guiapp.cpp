@@ -10,13 +10,14 @@ GuiApp::GuiApp(QWidget *parent) :
     ui(new Ui::GuiApp)
 {
     ui->setupUi(this);
-
+    ui->label_2->setVisible(false);
     _glWidget = new GLWidget;
 
     gc = new GUIController();
     _wheel = new SteeringWheel();
     initiated = false;
     operation_mode = CALIBRATION;
+    sentido = MARCHA_ADELANTE;
 
     gc->startDevice();
 
@@ -54,27 +55,32 @@ GuiApp::~GuiApp()
 void GuiApp::sendBTMessage(){
     Hand* manita = gc->getHDObject().getRightHand();
     Point position = manita->getCenter();
-    int marcha = gc->getHDObject().getFingersCount(LEFT_HAND);
+    if(gc->getHDObject().getFingersCount(RIGHT_HAND) > 3){
+        sentido = sentido*MARCHA_ATRAS;
+    }
+    int marcha = sentido*(gc->getHDObject().getFingersCount(LEFT_HAND));
 
     //Enviamos los datos via bluetooth
     //El formato sera *marcha*giro_respecto_perpendicular_centro_volante*
 
-    int angulo = Utils::getAngleOX(position, *(_wheel->getCenter()));
+    printf(("Position: %d, %d \n"), position.x, position.y);
+    printf(("Wheel: %d, %d \n"), _wheel->getCenter()->x, _wheel->getCenter()->y);
+    int angulo = Utils::getAngleOX(position, *(_wheel->getCenter())) * 180/M_PI;
     //angulo(position, centro_volante) y q devuelva un string con el número
     printf("Marcha %d, Giro %d\n", marcha, angulo);
 
     //Comprobamos que haya un angulo o una marcha para enviar
-    if(angulo >= 0 && marcha >= 0){
+    if(marcha >= 0){
         QString qs("*");
         qs.append(QString::number(marcha)).append("#").append(QString::number(angulo)).append("@");
         string to_send = qs.toStdString();
         printf("Enviar : %s\n", to_send.c_str());
-//        if(gc->btc1->send_message(to_send.c_str(), to_send.size()+1) < 0){//+1 por el car. null
-//            //error, hay que reabrir la conexión
-//            ui->reconnect->setVisible(true);
-//            ui->statusBar->showMessage("Se ha perdido la conexion. Reintentelo pulsando el boton de reconectar.");
-//            ui->btLED->setStyleSheet(QString("image: url(:/resources/img/img/red-led16.png);"));
-//        }
+        if(gc->btc1->send_message(to_send.c_str(), to_send.size()+1) < 0){//+1 por el car. null
+            //error, hay que reabrir la conexión
+            ui->reconnect->setVisible(true);
+            ui->statusBar->showMessage("Se ha perdido la conexion. Reintentelo pulsando el boton de reconectar.");
+            ui->btLED->setStyleSheet(QString("image: url(:/resources/img/img/red-led16.png);"));
+        }
     }
 }
 
@@ -134,6 +140,7 @@ void GuiApp::refresh()
     case 1:
     {
         bool ok = false;
+        ui->label_2->setVisible(true);
         ok = gc->process();
         Hand* manita = gc->getHDObject().getRightHand();
         Point position = manita->getCenter();
@@ -146,7 +153,18 @@ void GuiApp::refresh()
         }
         //mapDepth2Color(*(gc->dst), *(gc->rgbMat));
 
-        ui->lcdNumber->display(gc->getHDObject().getFingersCount(LEFT_HAND));
+        int angulo = Utils::getAngleOX(position, *(_wheel->getCenter())) * 180/M_PI;
+        ui->label_2->setText(QString::number(angulo));
+
+        int marcha = (gc->getHDObject().getFingersCount(LEFT_HAND));
+        int dedos = gc->getHDObject().getFingersCount(RIGHT_HAND);
+        if(dedos > 3){
+            sentido = MARCHA_ATRAS;
+        }else{
+            sentido = MARCHA_ADELANTE;
+        }
+        marcha = sentido*(gc->getHDObject().getFingersCount(LEFT_HAND));
+        ui->lcdNumber->display(marcha);
         showImage(*(gc->dst), *(gc->rgbMat));
 
     }

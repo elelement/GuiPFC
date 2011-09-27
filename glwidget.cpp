@@ -112,7 +112,7 @@ void GLWidget::initializeGL()
 void GLWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glClearColor(0.24f, 0.23f, 0.22f, 1.0f);
+    glClearColor(0.8f, 0.8f, 0.8f, 0.8f);
     glLoadIdentity();
     glTranslated(0.0, 0.0, -10.0);
     glRotated(xRot / 16.0, 1.0, 0.0, 0.0);
