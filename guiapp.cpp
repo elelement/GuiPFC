@@ -18,7 +18,7 @@ GuiApp::GuiApp(QWidget *parent) :
     initiated = false;
     operation_mode = CALIBRATION;
     sentido = MARCHA_ADELANTE;
-    frameNumber = 0;
+    manoAnteriorAbierta = false;
 
     gc->startDevice();
 
@@ -65,15 +65,12 @@ void GuiApp::sendBTMessage(){
     printf(("Position: %d, %d \n"), position.x, position.y);
     printf(("Wheel: %d, %d \n"), _wheel->getCenter()->x, _wheel->getCenter()->y);
     int angulo = Utils::getAngleOX(position, *(_wheel->getCenter())) * 180/M_PI;
-    //angulo(position, centro_volante) y q devuelva un string con el número
-    if(angulo < 0 ){
-        if(angulo < 90)
-            angulo = -90;
+    if(angulo < 90 && angulo > 45){
+        angulo = angulo - 90;
+    }else if(angulo > -90 && angulo < -45){
         angulo = angulo + 90;
     }else{
-        if(angulo > 90)
-            angulo = 90;
-        angulo = angulo - 90;
+        angulo = 0;
     }
     printf("Marcha %d, Giro %d\n", marcha, angulo);
 
@@ -160,24 +157,29 @@ void GuiApp::refresh()
         //mapDepth2Color(*(gc->dst), *(gc->rgbMat));
 
         int angulo = Utils::getAngleOX(position, *(_wheel->getCenter())) * 180/M_PI;
-        if(angulo < 0 )
-            angulo = angulo + 90;
-        else
+        if(angulo < 90 && angulo > 45){
             angulo = angulo - 90;
-
+        }else if(angulo > -90 && angulo < -45){
+            angulo = angulo + 90;
+        }else{
+            angulo = 0;
+        }
         ui->label_2->setText(QString::number(angulo));
 
         int marcha = (gc->getHDObject().getFingersCount(LEFT_HAND));
         int dedos = gc->getHDObject().getFingersCount(RIGHT_HAND);
-        if(frameNumber % 100 == 0){
-            if(dedos > 3 && sentido == MARCHA_ATRAS){
+        if(dedos > 3 && !manoAnteriorAbierta ){
+            if(sentido == MARCHA_ATRAS){
                 sentido = MARCHA_ADELANTE;
             }else if(dedos > 3){
                 sentido = MARCHA_ATRAS;
             }
-            frameNumber = 0;
+            manoAnteriorAbierta = true;
+        }
+        if(dedos <= 3){
+            manoAnteriorAbierta = false;
         }else{
-            frameNumber ++;
+            manoAnteriorAbierta = true;
         }
         marcha = sentido * marcha;
         ui->lcdNumber->display(marcha);
