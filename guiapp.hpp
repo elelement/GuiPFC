@@ -52,6 +52,7 @@ private:
     QFuture<void> _thread;
     Ui::GuiApp *ui;
     SteeringWheel* _wheel;
+    int frameNumber;
     bool initiated;
     int sentido;
     unsigned int cDepth;
