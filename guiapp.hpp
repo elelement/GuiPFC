@@ -52,6 +52,7 @@ private:
     QFuture<void> _thread;
     Ui::GuiApp *ui;
     SteeringWheel* _wheel;
+    Point _anterior;
     bool manoAnteriorAbierta;
     bool initiated;
     int sentido;

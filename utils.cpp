@@ -30,6 +30,21 @@ void Utils::setRect(Rect &r1, Rect const& r2){
     r1.y = r2.y;
 }
 
+float Utils::getAngle(Point& p1, Point& p2, Point& reference) {
+    float v1, v2, w1, w2;//coseno y seno
+
+    v1 = p1.x - reference.x;
+    v2 = p1.y - reference.y;
+    w1 = p2.x - reference.x;
+    w2 = p2.y - reference.y;
+
+    float m1 = sqrt(pow(v1, 2) + pow(v2, 2));
+    float m2 = sqrt(pow(w1, 2) + pow(w2, 2));
+    float p = v1*v2 + w1*w2;
+
+    return acos(p / (m1 * m2));
+}
+
 float Utils::getAngleOX(Point& p1, Point& p2) {
     float a, b;//coseno y seno
 

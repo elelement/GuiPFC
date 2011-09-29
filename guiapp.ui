@@ -344,7 +344,7 @@ background-color: rgb(243, 246, 255);</string>
     <property name="geometry">
      <rect>
       <x>460</x>
-      <y>300</y>
+      <y>220</y>
       <width>71</width>
       <height>41</height>
      </rect>

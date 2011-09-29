@@ -56,6 +56,7 @@ GuiApp::~GuiApp()
 void GuiApp::sendBTMessage(){
     Hand* manita = gc->getHDObject().getRightHand();
     Point position = manita->getCenter();
+    _anterior = Point(position.x, position.y);
 
     int marcha = sentido*(gc->getHDObject().getFingersCount(LEFT_HAND));
 
@@ -65,13 +66,15 @@ void GuiApp::sendBTMessage(){
     printf(("Position: %d, %d \n"), position.x, position.y);
     printf(("Wheel: %d, %d \n"), _wheel->getCenter()->x, _wheel->getCenter()->y);
     int angulo = Utils::getAngleOX(position, *(_wheel->getCenter())) * 180/M_PI;
-    if(angulo < 90 && angulo > 45){
+
+    if(angulo < 90 && angulo > 20){
         angulo = angulo - 90;
-    }else if(angulo > -90 && angulo < -45){
+    }else if(angulo > -90 && angulo < -20){
         angulo = angulo + 90;
     }else{
         angulo = 0;
     }
+
     printf("Marcha %d, Giro %d\n", marcha, angulo);
 
     QString qs("*");
@@ -155,15 +158,16 @@ void GuiApp::refresh()
             ui->okLED->setStyleSheet(QString("image: url(:/resources/img/img/red-led16.png);"));
         }
         //mapDepth2Color(*(gc->dst), *(gc->rgbMat));
-
         int angulo = Utils::getAngleOX(position, *(_wheel->getCenter())) * 180/M_PI;
-        if(angulo < 90 && angulo > 45){
+
+        if(angulo < 90 && angulo > 20){
             angulo = angulo - 90;
-        }else if(angulo > -90 && angulo < -45){
+        }else if(angulo > -90 && angulo < -20){
             angulo = angulo + 90;
         }else{
             angulo = 0;
         }
+
         ui->label_2->setText(QString::number(angulo));
 
         int marcha = (gc->getHDObject().getFingersCount(LEFT_HAND));
@@ -184,6 +188,10 @@ void GuiApp::refresh()
         marcha = sentido * marcha;
         ui->lcdNumber->display(marcha);
         showImage(*(gc->dst), *(gc->rgbMat));
+
+        //Actualizamos el valor anterior de la mano
+        _anterior.x = position.x;
+        _anterior.y = position.y;
 
     }
         break;

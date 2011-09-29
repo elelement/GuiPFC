@@ -43,6 +43,7 @@ public:
     static void drawCross(Mat& img, Point center, Scalar color, int d);
     static Mat rotateImage(const Mat& source, double angle);
     static void applyColor(const Mat& gray, Mat& dst, Scalar& color);
+    static float getAngle(Point& p1, Point& p2, Point& reference);
 
 //    static Mat invertMatrix(Mat& src);
 

@@ -2,7 +2,7 @@
 
 SteeringWheel::SteeringWheel()
 {
-    _center = new Point(ROWS, COLS/3);
+    _center = new Point(ROWS, COLS/2);
     _last = new Point(ROWS/2, COLS/2);
     _radius = (ROWS*0.5/2) / 2;
     _alpha = 0.0;
