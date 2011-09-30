@@ -1,10 +1,10 @@
 #ifndef GUIAPPHEADERS_HPP
 #define GUIAPPHEADERS_HPP
 
-#define ROWS 480
-#define COLS 640
-#define C_TIME 3000 //Calibration time in miliseconds
-#define REFRESH_TIMER 80 //41 = aprox 24 frames ps
+#define ROWS 480 /*! \def ROWS número de filas de la imagen principal. */
+#define COLS 640/*! \def COLS número de columnas de la imagen principal. */
+#define C_TIME 3000 /*! \def C_TIME Tiempo de espera para que el usuario se coloque frente al Kinect antes de realizar la segmentación por profundidad. */
+#define REFRESH_TIMER 80 /*! \def REFRESH_TIMER número de filas de la imagen principal. */
 #define SEND_TIME 300
 #define M_MIN 2048
 #define M_MAX 0

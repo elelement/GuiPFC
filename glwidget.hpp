@@ -4,45 +4,51 @@
 #include <QGLWidget>
 #include <opencv/cv.h>
 #include <opencv/cv.hpp>
+#include <QtGui>
+#include <QtOpenGL/QtOpenGL>
+#include <math.h>
+#include "utils.hpp"
 
+/*! \namespace cv */
 using namespace cv;
 
+/*!
+  * \class GLWidget
+  * \brief Widget que sirve para mostrar el primer frame
+            capturado por Kinect en 3D, en forma de nube
+            de puntos.
+  * Implementa los métodos para rotar la escena y pintar
+  * los puntos en el espacio tridimensional.
+  * Se trata de una clase adapatada de los ejemplos disponibles
+  * en la web de Nokia: <a href="http://doc.qt.nokia.com/4.7-snapshot/opengl-hellogl.html">Ejemplo Nokia QT OpenGL</a>
+  *
+  * \file glwidget.cpp
+  *
+  * \author José Manuel Cabrera Canal
+  * \version 1.0
+  */
 class GLWidget : public QGLWidget
  {
      Q_OBJECT
 
  public:
-    //R y T son las matrices de rotacion y de traslacion, respectivamente
-    //Valores obtenidos de la calibracion realizada por Nicolas Burrus
-    //http://nicolas.burrus.name/index.php/Research/KinectCalibration
-    static const float R[];
-    static const float T[];
-
-    //Color
-    static const float fx_rgb;
-    static const float fy_rgb;
-    static const float cx_rgb;
-    static const float cy_rgb;
-    static const float k1_rgb;
-    static const float k2_rgb;
-    static const float p1_rgb;
-    static const float p2_rgb;
-    static const float k3_rgb;
-    //Depth
-    static const float fx_d;
-    static const float fy_d;
-    static const float cx_d;
-    static const float cy_d;
-    static const float k1_d;
-    static const float k2_d;
-    static const float p1_d;
-    static const float p2_d;
-    static const float k3_d;
+    /*!
+      * Constructor de clase.
+      * \param parent Objeto padre sobre el que se va a crear el Widget.
+      */
      GLWidget(QWidget *parent = 0);
      ~GLWidget();
 
      QSize minimumSizeHint() const;
      QSize sizeHint() const;
+     /*!
+       * Asigna valores a las imágenes que va a utilizar para
+       * construir la imagen en 3D.
+       * \param color Imagen de color, por si queremos una nube
+                        de puntos en color (necesita calibración).
+       * \param depth Imagen de profundidad normalizada.
+       * \param dst Datos "brutos" de la profundidad.
+       */
      void setImages(Mat& color, Mat& depth, Mat& dst);
 
  public slots:
@@ -65,6 +71,11 @@ class GLWidget : public QGLWidget
 
  private:
      GLuint makeObject();
+     /*!
+       * Método modificado para construir la nube de puntos
+       * a partir de la imagen de profundidad obtenida del
+       * Kinect.
+       */
      GLuint makeImage();
      void quad(GLdouble x1, GLdouble y1, GLdouble x2, GLdouble y2,
                GLdouble x3, GLdouble y3, GLdouble x4, GLdouble y4);

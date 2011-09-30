@@ -248,7 +248,7 @@ font: 75 11pt &quot;Ubuntu&quot;;</string>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">image: url(:/resources/img/img/btgreen24.png);</string>
+      <string notr="true">image: url(:/resources/img/img/bluetooth.gif);</string>
      </property>
      <property name="text">
       <string/>
@@ -337,7 +337,13 @@ background-color: rgb(243, 246, 255);</string>
     </property>
     <property name="icon">
      <iconset resource="fuentes.qrc">
-      <normaloff>:/resources/img/img/tryagain.gif</normaloff>:/resources/img/img/tryagain.gif</iconset>
+      <normaloff>:/resources/img/img/wifi.gif</normaloff>:/resources/img/img/wifi.gif</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>32</width>
+      <height>32</height>
+     </size>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">

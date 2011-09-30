@@ -13,5 +13,7 @@
         <file>img/btgreen24.png</file>
         <file>img/Fotografiar48.png</file>
         <file>img/tryagain.gif</file>
+        <file>img/bluetooth.gif</file>
+        <file>img/wifi.gif</file>
     </qresource>
 </RCC>

@@ -1,44 +1,5 @@
 #include "glwidget.hpp"
 
-#include "glwidget.hpp"
-
-#include <QtGui>
-#include <QtOpenGL/QtOpenGL>
-
-#include <math.h>
-
-#include "glwidget.hpp"
-#include "utils.hpp"
-
-/*
- * Constantes de calibracion basadas en el modelo de Nicolas Burrus.
- * Mas informacion en http://nicolas.burrus.name/index.php/Research/KinectCalibration
- */
-
-const float GLWidget::R[] = {0.99984628826577793, 0.0012635359098409581, -0.017487233004436643, -0.0014779096108364480, 0.99992385683542895, -0.012251380107679535, 0.017470421412464927, 0.012275341476520762, 0.99977202419716948 };
-const float GLWidget::T[] = {0.019985242312092553, -0.00074423738761617583, -0.010916736334336222 };
-//Color
-const float GLWidget::fx_rgb = 5.2921508098293293e+02;
-const float GLWidget::fy_rgb = 5.2556393630057437e+02;
-const float GLWidget::cx_rgb = 3.2894272028759258e+02;
-const float GLWidget::cy_rgb = 2.6748068171871557e+02;
-const float GLWidget::k1_rgb = 2.6451622333009589e-01;
-const float GLWidget::k2_rgb = -8.3990749424620825e-01;
-const float GLWidget::p1_rgb = -1.9922302173693159e-03;
-const float GLWidget::p2_rgb = 1.4371995932897616e-03;
-const float GLWidget::k3_rgb = 9.1192465078713847e-01;
-
-//Depth
-const float GLWidget::fx_d = 594.21434211923247;
-const float GLWidget::fy_d = 591.04053696870778;
-const float GLWidget::cx_d = 339.30780975300314;
-const float GLWidget::cy_d = 242.73913761751615;
-const float GLWidget::k1_d = -0.26386489753128833;
-const float GLWidget::k2_d = 0.99966832163729757;
-const float GLWidget::p1_d = -0.00076275862143610667;
-const float GLWidget::p2_d = 0.0050350940090814270;
-const float GLWidget::k3_d = -1.3053628089976321;
-
 GLWidget::GLWidget(QWidget *parent)
     : QGLWidget(parent)
 {
@@ -166,21 +127,19 @@ void GLWidget::setImages(Mat &color, Mat &depth, Mat &dst){
     makeImage();
 }
 
-//Mejor pasar un vector<Point3d>
 GLuint GLWidget::makeImage(){
     int minp = 10000;
     int maxp = 0;
     for(int i=0; i<_dst.rows; i++){
         for(int j=0; j<_dst.cols; j++){
             Point p = Point(i,j);
-            float d = Utils::getDistanceFromSource(_depth, p);//_depth.at<uint16_t>(i,j);
+            float d = Utils::getDistanceFromSource(_depth, p);
             if(d > maxp)
                 maxp = d;
             if(d < minp)
                 minp = d;
         }
     }
-//    gluLookAt(xoff,yoff,zoff, cent[0] + cxoff, cent[1]+cyoff, cent[2]+czoff, 0,1,0);
     GLuint list = glGenLists(1);
     glNewList(list, GL_COMPILE);
     glPointSize(2.0);
