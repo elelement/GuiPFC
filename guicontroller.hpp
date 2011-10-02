@@ -8,6 +8,16 @@
 #include "mykinect.hpp"
 #include "handdetection.hpp"
 
+/*!
+  * \class GUIController
+  * \brief Capa media para la gestión de eventos y ejecución de las acciones asociadas a estos.
+  *
+  *
+  * \file guicontroller.cpp
+  *
+  * \author José Manuel Cabrera Canal
+  * \version 1.0
+  */
 class GUIController
 {
 public:

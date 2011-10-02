@@ -11,9 +11,9 @@ TEMPLATE = app
 
 
 SOURCES +=\
-        guiapp.cpp \
+    main.cpp \
+    guiapp.cpp \
     mykinect.cpp \
-    cppview.cpp \
     btcomm.cpp \
     guicontroller.cpp \
     handdetection.cpp \
