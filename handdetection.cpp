@@ -1,35 +1,33 @@
 #include "handdetection.hpp"
 
 HandDetection::HandDetection() {
-    _leftHand = new Hand();
-    _rightHand = new Hand();
-    _leftHand->setWhich(LEFT_HAND);
-    _rightHand->setWhich(RIGHT_HAND);
+    m_left_hand = new Hand();
+    m_right_hand = new Hand();
+    m_left_hand->setWhich(LEFT_HAND);
+    m_right_hand->setWhich(RIGHT_HAND);
 //    _rightHand->initStates(2,1,0, *(Mat_<float>(2, 2) << 1, 1, 0, 1));
-    _leftHand->initStates(6,1,0, *(Mat_<float>(6, 6) << 1,0,1,0,0.5,0, 0,1,0,1,0,0.5, 0,0,1,0,1,0, 0,0,0,1,0,1, 0,0,0,0,1,0, 0,0,0,0,0,1));
-    _rightHand->initStates(6,1,0, *(Mat_<float>(6, 6) << 1,0,1,0,0.5,0, 0,1,0,1,0,0.5, 0,0,1,0,1,0, 0,0,0,1,0,1, 0,0,0,0,1,0, 0,0,0,0,0,1));
-//    _to = new TrackObject();//hace falta un vector<TrackObject>
-//    _noTemplate = true;
+    m_left_hand->initStates(6,1,0, *(Mat_<float>(6, 6) << 1,0,1,0,0.5,0, 0,1,0,1,0,0.5, 0,0,1,0,1,0, 0,0,0,1,0,1, 0,0,0,0,1,0, 0,0,0,0,0,1));
+    m_right_hand->initStates(6,1,0, *(Mat_<float>(6, 6) << 1,0,1,0,0.5,0, 0,1,0,1,0,0.5, 0,0,1,0,1,0, 0,0,0,1,0,1, 0,0,0,0,1,0, 0,0,0,0,0,1));
 }
 
 HandDetection::~HandDetection() {
-    delete(_leftHand);
-    delete(_rightHand);
+    delete(m_left_hand);
+    delete(m_right_hand);
 }
 
 Hand* HandDetection::getHand(int hand) const{
     if(hand == LEFT_HAND){
-        return _leftHand;
+        return m_left_hand;
     }
-    return _rightHand;
+    return m_right_hand;
 }
 
 Hand* HandDetection::getLeftHand() const{
-    return _leftHand;
+    return m_left_hand;
 }
 
 Hand* HandDetection::getRightHand() const{
-    return _rightHand;
+    return m_right_hand;
 }
 
 //Wrapper de C a CPP
@@ -88,13 +86,14 @@ void HandDetection::detectHands(Mat& depthImage, Mat& color) {
     vector<Point> manoI, manoD;
     vector<vector<Point> > contornos;
     vector<Vec4i> hierarchy;
-//    double area = 0.0;
     vector<int> phull1, phull2;
     vector<CvConvexityDefect> fingerTips1, fingerTips2;
     vector<Point> curva1, curva2;
     Point ref(0, ROWS/2);
     vector<Point> palm2;
-
+    int distancia1;// distancia2;
+    distancia1 = 2000;
+//    distancia2 = 2000;
 
     cv::findContours(depthImage, contornos, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
     for(size_t i=0; i<contornos.size(); i++) {
@@ -105,26 +104,29 @@ void HandDetection::detectHands(Mat& depthImage, Mat& color) {
             Rect r = boundingRect(Mat(contornos[i]));
             Point punto = Utils::getRectCenter(r);
             int d = (int)Utils::OXDistance(punto, ref);
+            int aux1 = (int)Utils::OXDistance(punto, m_left_hand->getEstimatedPoint());
+//            int aux2 = (int)Utils::OXDistance(punto, m_right_hand->getEstimatedPoint());
             bool isleft = false;
-            if(d < COLS/2 ){//&& area > _leftHand->getArea()
+            if(aux1 < distancia1 ){//&& area > _leftHand->getArea()
                 manoI = contornos[i];
-                _leftHand->setContour(manoI);
-                _leftHand->setCenter(punto);
-                _leftHand->setWhich(LEFT_HAND);
+                m_left_hand->setContour(manoI);
+                m_left_hand->setCenter(punto);
+                m_left_hand->setWhich(LEFT_HAND);
                 isleft = true;
+                distancia1 = aux1;
             }
             if(d >= COLS/2){
                 manoD = contornos[i];
-                _rightHand->setContour(manoD);
-                _rightHand->setCenter(punto);
-                _rightHand->setWhich(RIGHT_HAND);
+                m_right_hand->setContour(manoD);
+                m_right_hand->setCenter(punto);
+                m_right_hand->setWhich(RIGHT_HAND);
             }
         }
     }
 
-    _leftHand->trackObject(color);//tienes q ver que pasa si lefhand vale lo mismo q antes
-    _rightHand->trackObject(color);
-    Point p = _rightHand->getCenter();
+    m_left_hand->trackObject(color);//tienes q ver que pasa si lefhand vale lo mismo q antes
+//    m_right_hand->trackObject(color);
+    Point p = m_right_hand->getCenter();
     circle(color, p, 10, Scalar(200,200,200), 5, -1);
 
     //Calculamos los poligonos de Hull (convex Hull)
@@ -150,7 +152,7 @@ void HandDetection::detectHands(Mat& depthImage, Mat& color) {
             //De todos los start y end, te quedas con los que coincidan del poligono aproximado
             findFingerTips(curva1, defects, fingerTips1);
             int fingersCount = (int)fingerTips1.size();
-            _rightHand->setFingers(fingersCount);
+            m_right_hand->setFingers(fingersCount);
         }
     }
 
@@ -196,7 +198,7 @@ void HandDetection::detectHands(Mat& depthImage, Mat& color) {
 //                cv::circle(color, center2, radius2, Scalar(255,255,255), -1, CV_AA);
 //            }
             int fingersCount = (int)fingerTips2.size();
-            _leftHand->setFingers(fingersCount);
+            m_left_hand->setFingers(fingersCount);
         }
     }
 }
@@ -249,37 +251,12 @@ void HandDetection::findFingerTips(vector<Point> &cvxHull, vector<CvConvexityDef
     }
 }
 
-/*
- * Entre la mano izquierda y derecha actual
- */
-float HandDetection::getHandsAngle(Point& p1, Point& p2) {
-    //trazamos una recta horizontal que contenga a la mano izquierda
-    //y otra que una el punto de la mano izqda con el de la mano dcha.
-    //Se podria calcular la posicion en vez de por el angulo por la distancia
-    float a, b;//coseno y seno
-    float alfa;//hipotenusa y anulo
-    
-    a = p2.x - p1.x;
-    b = p2.y - p1.y;
-//    printf("A %f -- B %f", a, b);
-    
-    if(a != 0){
-        alfa = std::atan(b/a);
-    }else{
-        return -1;
-    }
-//    printf(" -- c %f", alfa*(180/M_PI));
-//    alfa = fastAtan2(a, b);
-    return alfa*(180/M_PI);
-}
-
-
 int HandDetection::getFingersCount(int hand) const{
     int fingers = 0;
     if(hand == LEFT_HAND)
-        fingers = _leftHand->getFingers();
+        fingers = m_left_hand->getFingers();
     else if(hand == RIGHT_HAND)
-        fingers = _rightHand->getFingers();
+        fingers = m_right_hand->getFingers();
     return fingers;
 }
 

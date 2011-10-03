@@ -66,7 +66,7 @@ public:
 
 private:
     struct sockaddr_rc m_server_addr ; /*!< Estructura de direccionamiento para bluetooth. La utiliza el equipo. */
-    int m_sock;/*!< Descriptor del socket.*/
+    int m_sock; /*!< Descriptor del socket. */
 };
 
 

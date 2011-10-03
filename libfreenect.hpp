@@ -1,4 +1,4 @@
-/*
+/*!
  * This file is part of the OpenKinect Project. http://www.openkinect.org
  *
  * Copyright (c) 2010 individual OpenKinect contributors. See the CONTRIB file
@@ -23,6 +23,14 @@
  * Binary distributions must follow the binary distribution requirements of
  * either License.
  */
+
+/*!
+  * Librería para el manejo básico del Kinect. Proporciona acceso a los datos
+  * de profundidad y la cámara de color (también al micrófono, pero no se va
+  * a usar en este proyecto).
+  * Forma parte del proyecto OpenKinect <a href="http://openkinect.org/wiki/Main_Page">http://openkinect.org/wiki/Main_Paget</a>
+  * El código se puede descargar de <a href="https://github.com/OpenKinect/libfreenect">https://github.com/OpenKinect/libfreenect</a>
+  */
 
 #pragma once
 
