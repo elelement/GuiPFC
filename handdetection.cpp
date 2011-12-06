@@ -107,7 +107,7 @@ void HandDetection::detectHands(Mat& depthImage, Mat& color) {
             int aux1 = (int)Utils::OXDistance(punto, m_left_hand->getEstimatedPoint());
 //            int aux2 = (int)Utils::OXDistance(punto, m_right_hand->getEstimatedPoint());
             bool isleft = false;
-            if(aux1 < distancia1 ){//&& area > _leftHand->getArea()
+            if(d < COLS/2 ){//&& area > _leftHand->getArea()
                 manoI = contornos[i];
                 m_left_hand->setContour(manoI);
                 m_left_hand->setCenter(punto);

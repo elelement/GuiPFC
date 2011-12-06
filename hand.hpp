@@ -1,13 +1,6 @@
 #ifndef HAND_HPP
 #define HAND_HPP
 
-#include <iostream>
-#include <vector>
-#include <stdio.h>
-#include <cmath>
-
-#include <opencv/cv.h>
-#include <opencv/cv.hpp>
 
 #include "guiappheaders.hpp"
 #include "utils.hpp"

@@ -21,7 +21,8 @@ SOURCES +=\
     hand.cpp \
     steeringwheel.cpp \
     trackobject.cpp \
-    glwidget.cpp
+    glwidget.cpp \
+    skeleton.cpp
 
 HEADERS  += guiapp.hpp \
     mykinect.hpp \
@@ -34,7 +35,8 @@ HEADERS  += guiapp.hpp \
     hand.hpp \
     steeringwheel.hpp \
     trackobject.hpp \
-    glwidget.hpp
+    glwidget.hpp \
+    skeleton.hpp
 
 FORMS    += guiapp.ui
 
